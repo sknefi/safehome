@@ -30,7 +30,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../components/ui/dialog";
-import { Skeleton } from "../components/ui/skeleton";
+// Create a simple Skeleton component inline
+const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+);
 import { SettingsTab } from "../components/ui/tabs/SettingsTab";
 import { DevicesTab } from "../components/ui/tabs/DevicesTab";
 import { MembersTab } from "../components/ui/tabs/MembersTab";

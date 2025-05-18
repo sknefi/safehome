@@ -5,9 +5,13 @@ import { HouseholdCard } from "../components/ui/cards";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useUserStore } from "../providers";
-import { Skeleton } from "../components/ui/skeleton";
 import { AlertCircle, HomeIcon, PlusIcon } from "lucide-react";
 import { Button } from "../components/ui/button";
+
+// Create a simple Skeleton component inline
+const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+);
 
 export const UserHomepage: React.FC = () => {
   const GATEWAY = import.meta.env.VITE_GATEWAY;

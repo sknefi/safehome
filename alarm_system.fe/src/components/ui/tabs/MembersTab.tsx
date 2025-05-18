@@ -16,7 +16,11 @@ import { Input } from "../input";
 import { useUserStore } from "../../../providers";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Skeleton } from "../skeleton";
+
+// Create a simple Skeleton component inline
+const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+);
 
 interface MembersTabProps {
   isOwner?: boolean;

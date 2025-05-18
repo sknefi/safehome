@@ -5,7 +5,6 @@ import { HouseholdCard } from "../components/ui/cards";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useUserStore } from "../providers";
-import { Skeleton } from "../components/ui/skeleton";
 import { AlertCircle, HomeIcon, Loader2, PlusIcon } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
@@ -18,6 +17,11 @@ import { Input } from "../components/ui/input";
 import { RadioGroup, RadioGroupItem } from "../components/ui/radio-group";
 import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
+
+// Create a simple Skeleton component inline
+const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+);
 
 export const AdminHomepage: React.FC = () => {
   const [searchParams, setSearchParams] = React.useState("");

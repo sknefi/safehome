@@ -7,7 +7,7 @@
     "install:client": "cd alarm_system.fe && npm install",
     "install:server": "cd alarm_system.be && npm install",
     "postinstall": "npm run install:client && npm run install:server",
-    "build:client": "cd alarm_system.fe && npm run build",
+    "build:client": "cd alarm_system.fe && npm run build:force",
     "start:server": "node alarm_system.be/src/server.js",
     "start": "npm run build:client && npm run start:server"
   },

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const Household = require("../models/household");
+const Household = require("../models/HouseHold");
 
 exports.searchHouseholds = async (input) => {
   try {

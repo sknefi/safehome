@@ -1,4 +1,4 @@
-const Household = require("../models/Household");
+const Household = require("../models/HouseHold");
 const mongoose = require("mongoose");
 
 exports.createLog = async (logData) => {

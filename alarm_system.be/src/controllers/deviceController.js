@@ -1,6 +1,6 @@
-const deviceService = require("../services/deviceServices");
+const deviceServices = require("../services/deviceServices");
 const Device = require("../models/Device");
-const Household = require("../models/Household");
+const Household = require("../models/HouseHold");
 const User = require("../models/User");
 const mongoose = require("mongoose");
 const { sendDiscordNotification } = require("../middlewares/discordNotifier");
@@ -48,7 +48,7 @@ exports.createDevice = async (req, res) => {
       });
     }
 
-    const newDevice = await deviceService.createDevice({
+    const newDevice = await deviceServices.createDevice({
       name: name.trim(),
       type: type.trim(),
       active,
@@ -157,7 +157,7 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
       });
     }
 
-    const updatedDevice = await deviceService.setAlarmTriggeredOnByHwId(
+    const updatedDevice = await deviceServices.setAlarmTriggeredOnByHwId(
       hwId,
       ownerId
     );
@@ -214,7 +214,7 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
       });
     }
 
-    const updatedDevice = await deviceService.setAlarmTriggeredOffByHwId(
+    const updatedDevice = await deviceServices.setAlarmTriggeredOffByHwId(
       hwId,
       ownerId
     );
@@ -440,7 +440,7 @@ exports.getDevices = async (req, res) => {
       });
     }
 
-    const devices = await deviceService.getDevices(householdId);
+    const devices = await deviceServices.getDevices(householdId);
 
     res.status(200).json({
       success: true,

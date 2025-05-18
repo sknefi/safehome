@@ -1,5 +1,5 @@
 const Device = require("../models/Device");
-const Household = require("../models/Household");
+const Household = require("../models/HouseHold");
 
 exports.createDevice = async (deviceData) => {
   try {

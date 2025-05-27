@@ -172,7 +172,7 @@ exports.setAlarmTriggeredOnByHwId = async (req, res) => {
     );
 
     await sendDiscordNotification(
-      `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}" by user ${req.user.username}`
+      `:rotating_light: Alarm triggered ON for device "${updatedDevice.name}".`
     );
 
     res.status(200).json({
@@ -229,7 +229,7 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
     );
 
     await sendDiscordNotification(
-      `:white_check_mark: Alarm triggered OFF for device "${updatedDevice.name}" by user ${req.user.username}`
+      `:white_check_mark: Alarm triggered OFF for device "${updatedDevice.name}".`
     );
 
     res.status(200).json({
@@ -310,7 +310,7 @@ exports.setStateActive = async (ws, req) => {
     );
 
     await sendDiscordNotification(
-      `:white_check_mark: User ${req.user.username} activated ALL devices in household "${household.name}"`
+      `:white_check_mark: User activated ALL devices in household "${household.name}"`
     );
 
     ws.send(
@@ -396,7 +396,7 @@ exports.setStateDeactive = async (ws, req) => {
     );
 
     await sendDiscordNotification(
-      `:octagonal_sign: User ${req.user.username} deactivated ALL devices in household "${household.name}"`
+      `:octagonal_sign: User deactivated ALL devices in household "${household.name}"`
     );
 
     ws.send(

@@ -4,6 +4,7 @@ const Household = require("../models/HouseHold");
 const User = require("../models/User");
 const mongoose = require("mongoose");
 const { sendDiscordNotification } = require("../middlewares/discordNotifier");
+const logService = require("../services/logService");
 
 const isValidObjectId = (id) => mongoose.Types.ObjectId.isValid(id);
 

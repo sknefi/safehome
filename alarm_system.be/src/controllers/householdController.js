@@ -83,6 +83,29 @@ exports.deleteHousehold = async (req, res) => {
   }
 };
 
+exports.deleteHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+
+    const deleteHousehold = await householdService.deleteHouseholdAdmin(
+      householdId
+    );
+    res.status(200).json({
+      success: true,
+      message: "Household was deleted successfully",
+      data: deleteHousehold,
+    });
+  } catch (error) {
+    console.log("Error deleting household.", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.addUserToHousehold = async (req, res) => {
   try {
     const userId = req.user.id;

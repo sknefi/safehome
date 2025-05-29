@@ -12,6 +12,12 @@ router.delete(
   householdController.deleteHousehold
 );
 
+router.delete(
+  "/delete-admin/:id",
+  adminMiddleware,
+  householdController.deleteHouseholdAdmin
+);
+
 router.put(
   "/add-user/:id",
   authMiddleware,

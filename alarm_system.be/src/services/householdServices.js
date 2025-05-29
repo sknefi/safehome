@@ -39,6 +39,26 @@ exports.deleteHousehold = async (householdId, userId) => {
   }
 };
 
+exports.deleteHouseholdAdmin = async (householdId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+    });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    await household.deleteOne({ _id: householdId });
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   try {
     const household = await Household.findOne({

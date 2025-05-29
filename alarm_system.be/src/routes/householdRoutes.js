@@ -29,4 +29,10 @@ router.put(
   householdController.updateHouseholdName
 );
 
+router.get(
+  "/get-household-state/:hwId",
+  authMiddleware,
+  householdController.getHouseholdStateBasedOnHwId
+);
+
 module.exports = router;

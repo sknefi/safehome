@@ -3,6 +3,7 @@ const router = express.Router();
 const deviceController = require("../controllers/deviceController");
 const authMiddleware = require("../middlewares/auth");
 const adminAuth = require("../middlewares/admin");
+const combinedAuth = require("../middlewares/combinedAuth");
 const WebSocket = require("ws");
 
 router.get("/", authMiddleware, deviceController.getDevices);
@@ -45,7 +46,7 @@ const setupDeviceWebSocket = (wss) => {
       },
     };
 
-    authMiddleware(fakeReq, fakeRes, () => {
+    combinedAuth(fakeReq, fakeRes, () => {
       if (!fakeReq.user) return;
 
       ws.on("message", async (message) => {
@@ -64,6 +65,7 @@ const setupDeviceWebSocket = (wss) => {
           const controllerReq = {
             body: { householdId: data.householdId },
             user: fakeReq.user,
+            userType: fakeReq.userType,
           };
 
           if (data.action === "setStateActive") {

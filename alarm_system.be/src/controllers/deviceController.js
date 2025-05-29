@@ -248,6 +248,7 @@ exports.setAlarmTriggeredOffByHwId = async (req, res) => {
 exports.setStateActive = async (ws, req) => {
   try {
     const ownerId = req.user?.id;
+    const userType = req.userType;
     const householdId = req.body.householdId;
 
     if (!isValidObjectId(householdId)) {
@@ -260,10 +261,17 @@ exports.setStateActive = async (ws, req) => {
       return;
     }
 
-    const household = await Household.findOne({
-      _id: householdId,
-      ownerId: ownerId,
-    });
+    let household;
+    
+    // If admin, can access any household. If user, only their own household
+    if (userType === 'admin') {
+      household = await Household.findById(householdId);
+    } else {
+      household = await Household.findOne({
+        _id: householdId,
+        ownerId: ownerId,
+      });
+    }
 
     if (!household) {
       ws.send(
@@ -310,7 +318,7 @@ exports.setStateActive = async (ws, req) => {
     );
 
     await sendDiscordNotification(
-      `:white_check_mark: User activated ALL devices in household "${household.name}"`
+      `:white_check_mark: ${userType === 'admin' ? 'Admin' : 'User'} activated ALL devices in household "${household.name}"`
     );
 
     ws.send(
@@ -334,6 +342,7 @@ exports.setStateActive = async (ws, req) => {
 exports.setStateDeactive = async (ws, req) => {
   try {
     const ownerId = req.user?.id;
+    const userType = req.userType;
     const { householdId } = req.body;
 
     if (!isValidObjectId(householdId)) {
@@ -346,10 +355,17 @@ exports.setStateDeactive = async (ws, req) => {
       return;
     }
 
-    const household = await Household.findOne({
-      _id: householdId,
-      ownerId: ownerId,
-    });
+    let household;
+    
+    // If admin, can access any household. If user, only their own household
+    if (userType === 'admin') {
+      household = await Household.findById(householdId);
+    } else {
+      household = await Household.findOne({
+        _id: householdId,
+        ownerId: ownerId,
+      });
+    }
 
     if (!household) {
       ws.send(
@@ -396,7 +412,7 @@ exports.setStateDeactive = async (ws, req) => {
     );
 
     await sendDiscordNotification(
-      `:octagonal_sign: User deactivated ALL devices in household "${household.name}"`
+      `:octagonal_sign: ${userType === 'admin' ? 'Admin' : 'User'} deactivated ALL devices in household "${household.name}"`
     );
 
     ws.send(

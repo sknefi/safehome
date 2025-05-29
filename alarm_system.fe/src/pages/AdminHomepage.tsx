@@ -19,13 +19,19 @@ import { Label } from "../components/ui/label";
 import { Alert, AlertDescription } from "../components/ui/alert";
 
 // Create a simple Skeleton component inline
-const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+const Skeleton = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={`animate-pulse rounded-md bg-gray-200 ${className}`}
+    {...props}
+  />
 );
 
 export const AdminHomepage: React.FC = () => {
   const [searchParams, setSearchParams] = React.useState("");
-  const [searchBy, setSearchBy] = React.useState("id");
+  const [searchBy, setSearchBy] = React.useState("householdId");
 
   const GATEWAY = import.meta.env.VITE_GATEWAY;
   const role = useUserStore((state) => state.userData?.role);
@@ -39,7 +45,7 @@ export const AdminHomepage: React.FC = () => {
     queryKey: ["adminSearch", searchParams, searchBy],
     queryFn: async () => {
       const { data } = await axios.get<DtoOut>(
-        `${GATEWAY}/user/${searchBy}/${searchParams}`,
+        `${GATEWAY}/search/${searchBy}?input=${searchParams}`,
         {
           headers: {
             Authorization: `Bearer ${BEARER_TOKEN}`,
@@ -66,7 +72,7 @@ export const AdminHomepage: React.FC = () => {
       </div>
     );
 
-  if (adminSearch.error)
+  /* if (adminSearch.error)
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <div className="rounded-full bg-red-100 p-3 mb-4">
@@ -80,80 +86,76 @@ export const AdminHomepage: React.FC = () => {
           Try Again
         </Button>
       </div>
-    );
+    ); */
 
   return (
-    <Card className="mb-8">
-      <CardHeader>
-        <CardTitle className="text-xl">Navbar</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="flex gap-4 mb-6">
-          <Input
-            value={searchParams}
-            onChange={(e) => setSearchParams(e.target.value)}
-            placeholder="SearchBar"
-            className="flex-1"
-          />
-          <Button
-            onClick={() => adminSearch.refetch()}
-            disabled={adminSearch.isFetching}
-            className="flex items-center gap-2"
-          >
-            {adminSearch.isFetching ? (
-              <>
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span>Searching</span>
-              </>
-            ) : (
-              "Search"
-            )}
-          </Button>
-        </div>
+    <>
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-xl">Navbar</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4 mb-6">
+            <Input
+              value={searchParams}
+              onChange={(e) => setSearchParams(e.target.value)}
+              placeholder="SearchBar"
+              className="flex-1"
+            />
+            <Button
+              onClick={() => adminSearch.refetch()}
+              disabled={adminSearch.isFetching}
+              className="flex items-center gap-2"
+            >
+              {adminSearch.isFetching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span>Searching</span>
+                </>
+              ) : (
+                "Search"
+              )}
+            </Button>
+          </div>
 
-        <div className="mb-4">
-          <p className="mb-2 font-medium">Search by:</p>
-          <RadioGroup
-            value={searchBy}
-            onValueChange={setSearchBy}
-            className="flex gap-6"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="id" id="radio-id" />
-              <Label htmlFor="radio-id">Household ID</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="name" id="radio-name" />
-              <Label htmlFor="radio-name">Household Name</Label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="owner" id="radio-owner" />
-              <Label htmlFor="radio-owner">Household Owner</Label>
-            </div>
-          </RadioGroup>
-        </div>
+          <div className="mb-4">
+            <p className="mb-2 font-medium">Search by:</p>
+            <RadioGroup
+              value={searchBy}
+              onValueChange={setSearchBy}
+              className="flex gap-6"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="householdId" id="radio-id" />
+                <Label htmlFor="radio-id">Household ID</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="name" id="radio-name" />
+                <Label htmlFor="radio-name">Household Name</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="ownerId" id="radio-owner" />
+                <Label htmlFor="radio-owner">Household Owner</Label>
+              </div>
+            </RadioGroup>
+          </div>
 
-        {adminSearch.error && (
-          <Alert variant="destructive" className="mt-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>
-              {adminSearch.error?.message ||
-                "Failed to perform search. Please try again."}
-            </AlertDescription>
-          </Alert>
-        )}
-
-        <pre className="text-xs mt-4 p-2 bg-gray-100 rounded-md hidden">
-          {JSON.stringify(
-            {
-              searchParams: searchParams,
-              searchBy: searchBy,
-            },
-            null,
-            2
+          {adminSearch.error && (
+            <Alert variant="destructive" className="mt-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {adminSearch.error?.message ||
+                  "Failed to perform search. Please try again."}
+              </AlertDescription>
+            </Alert>
           )}
-        </pre>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <div>
+        {households?.map((household) => (
+          <HouseholdCard key={household._id} household={household} />
+        ))}
+      </div>
+    </>
   );
 };

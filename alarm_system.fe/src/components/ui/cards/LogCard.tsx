@@ -7,8 +7,6 @@ interface LogCardProps {
 }
 
 export const LogCard: React.FC<LogCardProps> = ({ log }) => {
-  console.log(log);
-
   const getLogTypeIcon = (type: string | undefined) => {
     switch (type && type.toLowerCase()) {
       case "alarm":

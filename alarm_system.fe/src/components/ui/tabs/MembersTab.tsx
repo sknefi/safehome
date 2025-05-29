@@ -17,7 +17,6 @@ import { useUser } from "../../../providers";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
-// Create a simple Skeleton component inline
 const Skeleton = ({
   className,
   ...props

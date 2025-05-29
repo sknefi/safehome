@@ -39,6 +39,8 @@ export const MembersTab: React.FC<MembersTabProps> = ({
   const [open, setOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isSearched, setIsSearched] = React.useState(false);
+  const { userData } = useUser();
+  const role = userData?.role;
 
   interface DtoOut {
     success: boolean;
@@ -94,7 +96,7 @@ export const MembersTab: React.FC<MembersTabProps> = ({
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-xl font-medium">Members</h3>
-        {isOwner && (
+        {(isOwner || role === "admin") && (
           <Button onClick={() => setOpen(true)}>
             <CirclePlus className="h-4 w-4 mr-2" />
             Add Member
@@ -110,6 +112,7 @@ export const MembersTab: React.FC<MembersTabProps> = ({
               key={household.ownerId._id}
               member={household.ownerId}
               householdId={household._id}
+              ownerId={household.ownerId._id}
             />
           </div>
         )}
@@ -134,7 +137,7 @@ export const MembersTab: React.FC<MembersTabProps> = ({
             <p className="text-gray-500">
               No additional members in this household
             </p>
-            {isOwner && (
+            {(isOwner || role === "admin") && (
               <Button
                 variant="outline"
                 size="sm"

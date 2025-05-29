@@ -4,7 +4,7 @@ import { HouseholdCard } from "../components/ui/cards";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useUser } from "../providers";
-import { AlertCircle, HomeIcon, Loader2, PlusIcon } from "lucide-react";
+import { AlertCircle, HomeIcon, Loader2, PlusIcon, Search } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -72,7 +72,7 @@ export const AdminHomepage: React.FC = () => {
       </div>
     );
 
-  /* if (adminSearch.error)
+  if (adminSearch.error)
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
         <div className="rounded-full bg-red-100 p-3 mb-4">
@@ -86,20 +86,26 @@ export const AdminHomepage: React.FC = () => {
           Try Again
         </Button>
       </div>
-    ); */
+    );
 
   return (
-    <>
-      <Card className="mb-8">
-        <CardHeader>
-          <CardTitle className="text-xl">Navbar</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="container mx-auto px-4 py-6">
+      <div className="mb-8">
+        {/* Search Header */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Search Households
+          </h2>
+          <p className="text-gray-600">Find households by ID, name, or owner</p>
+        </div>
+
+        {/* Search Controls */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6">
           <div className="flex gap-4 mb-6">
             <Input
               value={searchParams}
               onChange={(e) => setSearchParams(e.target.value)}
-              placeholder="SearchBar"
+              placeholder="Enter search term..."
               className="flex-1"
             />
             <Button
@@ -118,6 +124,7 @@ export const AdminHomepage: React.FC = () => {
             </Button>
           </div>
 
+          {/* Search Options */}
           <div className="mb-4">
             <p className="mb-2 font-medium">Search by:</p>
             <RadioGroup
@@ -139,23 +146,15 @@ export const AdminHomepage: React.FC = () => {
               </div>
             </RadioGroup>
           </div>
+        </div>
+      </div>
 
-          {adminSearch.error && (
-            <Alert variant="destructive" className="mt-4">
-              <AlertCircle className="h-4 w-4" />
-              <AlertDescription>
-                {adminSearch.error?.message ||
-                  "Failed to perform search. Please try again."}
-              </AlertDescription>
-            </Alert>
-          )}
-        </CardContent>
-      </Card>
-      <div>
+      {/* Results Section */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {households?.map((household) => (
           <HouseholdCard key={household._id} household={household} />
         ))}
       </div>
-    </>
+    </div>
   );
 };

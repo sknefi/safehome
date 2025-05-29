@@ -42,6 +42,11 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const householdId = household?._id;
   const GATEWAY = import.meta.env.VITE_GATEWAY;
   const { accessToken: BEARER_TOKEN } = useUser();
+  const { userData } = useUser();
+  const role = userData?.role;
+
+  //########
+  const adminSearch = role === "admin" ? "add-user-admin" : "add-user";
 
   const hasDevices = React.useMemo(
     () => (household?.devices?.length ?? 0) > 0,
@@ -54,6 +59,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     message: string;
   }
 
+  const adminDelete = role === "admin" ? "delete-admin" : "delete";
   const {
     mutate: deleteHouseholdMutation,
     isPending: isPendingDeleteHousehold,
@@ -61,7 +67,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   } = useMutation({
     mutationFn: async () => {
       const { data } = await axios.delete<DtoOutDeleteHousehold>(
-        `${GATEWAY}/household/delete/${householdId}`,
+        `${GATEWAY}/household/${adminDelete}/${householdId}`,
         {
           headers: {
             Authorization: `Bearer ${BEARER_TOKEN}`,
@@ -95,13 +101,15 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
     newName: string;
   }
 
+  const adminChangeName =
+    role === "admin" ? "update-name-admin" : "update-name";
   const {
     mutate: updateHouseholdNameMutation,
     isPending: isPendingUpdateHouseholdName,
   } = useMutation<DtoOutUpdateHouseholdName, Error, DtoInUpdateHouseholdName>({
     mutationFn: async (data: DtoInUpdateHouseholdName) => {
       const response = await axios.put<DtoOutUpdateHouseholdName>(
-        `${GATEWAY}/household/update-name/${householdId}`,
+        `${GATEWAY}/household/${adminChangeName}/${householdId}`,
         { name: data.newName },
         {
           headers: {

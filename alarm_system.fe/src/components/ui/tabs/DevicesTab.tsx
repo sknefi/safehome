@@ -50,8 +50,6 @@ const FormSchema = z.object({
     .max(50, {
       message: "Type of device must be maximum 50 characters.",
     }),
-  householdId: z.string(),
-
   hw_id: z
     .string()
     .min(3, {
@@ -65,7 +63,7 @@ const FormSchema = z.object({
 export const DevicesTab: React.FC<DeviceTabProps> = ({
   devices,
   householdId,
-  isPendingGet
+  isPendingGet,
 }) => {
   const [open, setOpen] = React.useState(false);
   const { userData } = useUser();
@@ -79,7 +77,6 @@ export const DevicesTab: React.FC<DeviceTabProps> = ({
     defaultValues: {
       name: "",
       type: "",
-      householdId: householdId,
       hw_id: "",
     },
   });
@@ -109,7 +106,7 @@ export const DevicesTab: React.FC<DeviceTabProps> = ({
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["households"] });
+      queryClient.invalidateQueries({ queryKey: ["household", householdId] });
       toast.success("Creation successful", {
         description: "New device has been created successfully",
       });
@@ -126,13 +123,20 @@ export const DevicesTab: React.FC<DeviceTabProps> = ({
   });
 
   function onSubmit(data: FormFields) {
-    createDeviceMutation(data);
-  }
+    if (!householdId) {
+      toast.error("Missing household ID");
+      return;
+    }
 
+    createDeviceMutation({
+      ...data,
+      householdId, // Injected here
+    });
+  }
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-medium">Members</h3>
+        <h3 className="text-xl font-medium">Security Devices</h3>
         {role === "admin" && (
           <Button onClick={() => setOpen(true)}>
             <CirclePlus className="h-4 w-4 mr-2" />
@@ -147,7 +151,7 @@ export const DevicesTab: React.FC<DeviceTabProps> = ({
             <DeviceCard
               key={device._id}
               device={device}
-              isPending={isPendingGet}
+              householdId={householdId}
             />
           ))
         ) : (
@@ -172,7 +176,9 @@ export const DevicesTab: React.FC<DeviceTabProps> = ({
 
           <Form {...form}>
             <form
-              onSubmit={form.handleSubmit(onSubmit)}
+              onSubmit={form.handleSubmit(onSubmit, (err) =>
+                console.error("Form errors:", err)
+              )}
               className="w-full space-y-6"
             >
               <FormField

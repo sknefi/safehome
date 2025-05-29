@@ -237,7 +237,7 @@ export const HouseholdDetail: React.FC = () => {
           )}
         </div>
 
-        {householdData?.isOwner ? (
+        {householdData?.isOwner || role === "admin" ? (
           <Button
             variant="outline"
             size="sm"
@@ -291,7 +291,10 @@ export const HouseholdDetail: React.FC = () => {
             />
           </TabsContent>
           <TabsContent value="logs" className="space-y-3">
-            <LogsTab logs={householdData?.data.logs} />
+            <LogsTab
+              logs={householdData?.data.logs}
+              householdId={householdId}
+            />
           </TabsContent>
         </Tabs>
       )}

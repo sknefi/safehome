@@ -18,12 +18,14 @@ interface MemberCardProps {
   member?: User;
   isOwner?: boolean;
   householdId?: string;
+  ownerId?: string;
 }
 
 export const MemberCard: React.FC<MemberCardProps> = ({
   member,
   isOwner,
   householdId,
+  ownerId,
 }) => {
   const [open, setOpen] = React.useState(false);
   const queryClient = useQueryClient();
@@ -36,6 +38,9 @@ export const MemberCard: React.FC<MemberCardProps> = ({
     memberId?: string;
   }
 
+  const { userData } = useUser();
+  const role = userData?.role;
+  const adminSearch = role === "admin" ? "remove-user-admin" : "remove-user";
   const GATEWAY = import.meta.env.VITE_GATEWAY;
   const { accessToken: BEARER_TOKEN } = useUser();
   const { mutate: removeUserMutation, isPending } = useMutation<
@@ -45,7 +50,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   >({
     mutationFn: async (data: DtoIn) => {
       const response = await axios.put<DtoOut>(
-        `${GATEWAY}/household/remove-user/${householdId}`,
+        `${GATEWAY}/household/${adminSearch}/${householdId}`,
         { deleteUserId: data.memberId },
         {
           headers: {
@@ -89,7 +94,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
           </div>
         </div>
 
-        {isOwner && (
+        {(isOwner || role === "admin") && ownerId !== member?._id && (
           <Button
             onClick={() => setOpen(true)}
             variant="ghost"

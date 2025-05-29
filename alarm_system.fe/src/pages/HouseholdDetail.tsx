@@ -72,7 +72,7 @@ export const HouseholdDetail: React.FC = () => {
   } = useQuery({
     queryKey: ["household", householdId],
     queryFn: async () => {
-      const roleGet = role === "admin" ? "admin/wholeAdmin" : "user/whole";
+      const roleGet = role === "admin" ? "admin/whole-admin" : "user/whole";
       const { data } = await axios.get<DtoOutGetHousehold>(
         `${GATEWAY}/${roleGet}/${householdId}`,
         {
@@ -167,9 +167,11 @@ export const HouseholdDetail: React.FC = () => {
 
   const triggeredDevices: Device[] = React.useMemo(
     () =>
-      household?.devices.filter(
-        (device) => device.alarm_triggered === 1 && device.active === true
-      ) || [],
+      Array.isArray(household?.devices)
+        ? household.devices.filter(
+            (device) => device.alarm_triggered === 1 && device.active === true
+          )
+        : [],
     [household?.devices]
   );
 
@@ -198,6 +200,7 @@ export const HouseholdDetail: React.FC = () => {
         </div>
       </div>
     </div>;
+
   if (errorGetHousehold)
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
@@ -275,7 +278,11 @@ export const HouseholdDetail: React.FC = () => {
           </TabsList>
 
           <TabsContent value="devices" className="space-y-3">
-            <DevicesTab devices={householdData?.data.devices} />
+            <DevicesTab
+              devices={householdData?.data.devices}
+              householdId={householdData?.data._id}
+              isPendingGet={isPendingGetHousehold}
+            />
           </TabsContent>
           <TabsContent value="members" className="space-y-3">
             <MembersTab

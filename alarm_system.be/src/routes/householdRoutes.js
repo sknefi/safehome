@@ -53,5 +53,11 @@ router.put(
   adminMiddleware,
   householdController.updateHouseholdNameAdmin
 );
+  
+router.get(
+  "/get-household-state/:hwId",
+  authMiddleware,
+  householdController.getHouseholdStateBasedOnHwId
+);
 
 module.exports = router;

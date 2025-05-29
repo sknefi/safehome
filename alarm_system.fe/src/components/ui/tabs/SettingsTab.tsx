@@ -18,7 +18,7 @@ import {
 } from "../tooltip";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useUserStore } from "../../../providers";
+import { useUser } from "../../../providers";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ArrowLeft, Pause, Play, Trash2, XCircle } from "lucide-react";
@@ -41,7 +41,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
   const queryClient = useQueryClient();
   const householdId = household?._id;
   const GATEWAY = import.meta.env.VITE_GATEWAY;
-  const BEARER_TOKEN = useUserStore((state) => state.accessToken);
+  const { accessToken: BEARER_TOKEN } = useUser();
 
   const hasDevices = React.useMemo(
     () => (household?.devices?.length ?? 0) > 0,

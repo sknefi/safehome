@@ -1,37 +1,40 @@
 import * as React from "react";
 import { Log } from "../../assets";
-import { Activity, AlertCircle, AlertTriangle, Info, Key } from "lucide-react";
+import { Activity, AlertCircle, Power, PowerOff } from "lucide-react";
 
 interface LogCardProps {
   log?: Log;
 }
 
 export const LogCard: React.FC<LogCardProps> = ({ log }) => {
-  //### adjust types
   const getLogTypeIcon = (type: string | undefined) => {
     switch (type && type.toLowerCase()) {
-      case "alert":
+      case "alarm":
         return <AlertCircle className="h-5 w-5 text-red-500" />;
-      case "warning":
-        return <AlertTriangle className="h-5 w-5 text-amber-500" />;
-      case "info":
-        return <Info className="h-5 w-5 text-gray-500" />;
-      case "access":
-        return <Key className="h-5 w-5 text-green-500" />;
+      case "activation":
+        return <Power className="h-5 w-5 text-green-500" />;
+      case "deactivation":
+        return <PowerOff className="h-5 w-5 text-gray-500" />;
       default:
         return <Activity className="h-5 w-5 text-gray-500" />;
     }
   };
 
-  const formatDate = (date: Date | undefined) => {
-    if (!date) return "";
-    return new Date(date).toLocaleString("en-US", {
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-    });
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+
+    return `${day}.${month}.${year} ${hours}:${minutes}`;
+  };
+
+  const getLogTypeLabel = (type: string | undefined) => {
+    if (!type) return "Unknown";
+    return type.charAt(0).toUpperCase() + type.slice(1);
   };
 
   return (
@@ -40,8 +43,12 @@ export const LogCard: React.FC<LogCardProps> = ({ log }) => {
         <div className="flex-shrink-0 mt-1">{getLogTypeIcon(log?.type)}</div>
         <div className="flex-grow">
           <div className="flex justify-between items-start">
-            <p className="font-medium text-gray-900">{log?.type}</p>
-            <p className="text-sm text-gray-500">{formatDate(log?.time)}</p>
+            <p className="font-medium text-gray-900">
+              {getLogTypeLabel(log?.type)}
+            </p>
+            <p className="text-sm text-gray-500">
+              {formatDate(log?.createdAt)}
+            </p>
           </div>
           <p className="text-gray-700 mt-1">{log?.message}</p>
         </div>

@@ -72,7 +72,7 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
       .populate({
         path: "devices",
         model: Device,
-        select: "name type active alarm_triggered createdAt",
+        select: "name type active alarm_triggered createdAt hw_id",
       })
       .populate({
         path: "members",

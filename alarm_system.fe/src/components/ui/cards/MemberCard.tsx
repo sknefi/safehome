@@ -1,6 +1,6 @@
 import * as React from "react";
 import { User } from "../../assets";
-import { useUserStore } from "../../../providers";
+import { useUser } from "../../../providers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "sonner";
@@ -37,7 +37,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
   }
 
   const GATEWAY = import.meta.env.VITE_GATEWAY;
-  const BEARER_TOKEN = useUserStore((state) => state.accessToken);
+  const { accessToken: BEARER_TOKEN } = useUser();
   const { mutate: removeUserMutation, isPending } = useMutation<
     DtoOut,
     Error,

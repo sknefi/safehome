@@ -22,6 +22,7 @@ import { useUser } from "../../../providers";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { ArrowLeft, Pause, Play, Trash2, XCircle } from "lucide-react";
+import { getWebSocketUrl } from "../../../utils/websocket";
 
 interface SettingsTabProps {
   household?: HouseholdWithOwner;
@@ -152,7 +153,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
         if (!BEARER_TOKEN) {
           return reject(new Error("Authentication token is missing"));
         }
-        const socket = new WebSocket(`ws://localhost:3000/ws`, [BEARER_TOKEN]);
+        const socket = new WebSocket(getWebSocketUrl(), [BEARER_TOKEN]);
 
         socket.onopen = () => {
           socket.send(
@@ -223,7 +224,7 @@ export const SettingsTab: React.FC<SettingsTabProps> = ({
         if (!BEARER_TOKEN) {
           return reject(new Error("Authentication token is missing"));
         }
-        const socket = new WebSocket(`ws://localhost:3000/ws`, [BEARER_TOKEN]);
+        const socket = new WebSocket(getWebSocketUrl(), [BEARER_TOKEN]);
 
         socket.onopen = () => {
           socket.send(

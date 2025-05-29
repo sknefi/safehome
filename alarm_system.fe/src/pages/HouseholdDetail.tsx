@@ -44,6 +44,7 @@ import { SettingsTab } from "../components/ui/tabs/SettingsTab";
 import { DevicesTab } from "../components/ui/tabs/DevicesTab";
 import { MembersTab } from "../components/ui/tabs/MembersTab";
 import { LogsTab } from "../components/ui/tabs/LogsTab";
+import { getWebSocketUrl } from "../utils/websocket";
 
 export const HouseholdDetail: React.FC = () => {
   const [openAlarmDialog, setOpenAlarmDialog] = React.useState(false);
@@ -105,7 +106,7 @@ export const HouseholdDetail: React.FC = () => {
         if (!BEARER_TOKEN) {
           return reject(new Error("Authentication token is missing"));
         }
-        const socket = new WebSocket(`ws://localhost:3000/ws`, [BEARER_TOKEN]);
+        const socket = new WebSocket(getWebSocketUrl(), [BEARER_TOKEN]);
 
         socket.onopen = () => {
           socket.send(

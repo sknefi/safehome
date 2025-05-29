@@ -1,10 +1,9 @@
 import * as React from "react";
 import { Household } from "../components/assets";
-import { ToolbarHomepage } from "../components/ui/toolbars";
 import { HouseholdCard } from "../components/ui/cards";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useUserStore } from "../providers";
+import { useUser } from "../providers";
 import { AlertCircle, HomeIcon, Loader2, PlusIcon } from "lucide-react";
 import { Button } from "../components/ui/button";
 import {
@@ -34,13 +33,14 @@ export const AdminHomepage: React.FC = () => {
   const [searchBy, setSearchBy] = React.useState("householdId");
 
   const GATEWAY = import.meta.env.VITE_GATEWAY;
-  const role = useUserStore((state) => state.userData?.role);
+  const { userData } = useUser();
+  const role = userData?.role;
   interface DtoOut {
     success: boolean;
     data: Household[];
   }
 
-  const BEARER_TOKEN = useUserStore((state) => state.accessToken);
+  const { accessToken: BEARER_TOKEN } = useUser();
   const adminSearch = useQuery<DtoOut, Error>({
     queryKey: ["adminSearch", searchParams, searchBy],
     queryFn: async () => {

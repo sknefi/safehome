@@ -114,3 +114,21 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+exports.getAllUsersAdmin = async (req, res) => {
+  try {
+    const users = await User.find().select("-password -refreshToken");
+
+    res.status(200).json({
+      success: true,
+      data: users,
+    });
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};

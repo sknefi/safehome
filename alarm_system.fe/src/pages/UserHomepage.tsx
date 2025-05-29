@@ -20,6 +20,23 @@ const Skeleton = ({
 );
 
 export const UserHomepage: React.FC = () => {
+  const HouseholdCardSkeleton = () => (
+    <div className="p-6 bg-white rounded-lg border border-gray-200 shadow-sm">
+      <div className="flex items-start justify-between mb-4">
+        <Skeleton className="h-6 w-32" />
+        <Skeleton className="h-5 w-5 rounded-full" />
+      </div>
+      <div className="space-y-2 mb-4">
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-3/4" />
+      </div>
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-4 w-24" />
+        <Skeleton className="h-8 w-20 rounded" />
+      </div>
+    </div>
+  );
+
   const GATEWAY = import.meta.env.VITE_GATEWAY;
   interface DtoOut {
     success: boolean;
@@ -42,14 +59,16 @@ export const UserHomepage: React.FC = () => {
 
   const households = data?.data || [];
 
-  //### improve skeleton + toolbar
   if (isPending)
     return (
-      <div className="flex flex-col items-center space-y-4 p-6">
-        <Skeleton className="h-[125px] w-full max-w-[250px] rounded-xl" />
-        <div className="w-full max-w-[250px] space-y-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
+      <div className="container mx-auto px-4 py-6">
+        <div className="mb-6">
+          <Skeleton className="h-12 w-full rounded-lg" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 6 }).map((_, index) => (
+            <HouseholdCardSkeleton key={index} />
+          ))}
         </div>
       </div>
     );

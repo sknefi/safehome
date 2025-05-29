@@ -6,11 +6,12 @@ import { ClipboardList } from "lucide-react";
 
 interface LogsTabProps {
   logs?: Log[];
+  householdId?: string;
 }
 
 const PAGE_SIZE = 20;
 
-export const LogsTab: React.FC<LogsTabProps> = ({ logs = [] }) => {
+export const LogsTab: React.FC<LogsTabProps> = ({ logs = [], householdId }) => {
   const sortedLogs = React.useMemo(
     () =>
       [...logs].sort(
@@ -53,7 +54,7 @@ export const LogsTab: React.FC<LogsTabProps> = ({ logs = [] }) => {
       {visibleLogs.length > 0 ? (
         <div className="space-y-4">
           {visibleLogs.map((log) => (
-            <LogCard key={log._id} log={log} />
+            <LogCard key={log._id} log={log} householdId={householdId} />
           ))}
           {visibleLogs.length < sortedLogs.length && (
             <div ref={loader} className="h-10"></div> // trigger load more

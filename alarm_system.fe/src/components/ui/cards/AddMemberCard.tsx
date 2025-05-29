@@ -25,6 +25,9 @@ export const AddMemberCard: React.FC<AddMemberCardProps> = ({
     memberId?: string;
   }
 
+  const { userData } = useUser();
+  const role = userData?.role;
+  const adminSearch = role === "admin" ? "add-user-admin" : "add-user";
   const GATEWAY = import.meta.env.VITE_GATEWAY;
   const { accessToken: BEARER_TOKEN } = useUser();
   const { mutate: addUserMutation, isPending } = useMutation<
@@ -34,7 +37,7 @@ export const AddMemberCard: React.FC<AddMemberCardProps> = ({
   >({
     mutationFn: async (data: DtoIn) => {
       const response = await axios.put<DtoOut>(
-        `${GATEWAY}/household/add-user/${householdId}`,
+        `${GATEWAY}/household/${adminSearch}/${householdId}`,
         { newUserId: data.memberId },
         {
           headers: {

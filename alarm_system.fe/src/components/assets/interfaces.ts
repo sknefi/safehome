@@ -43,5 +43,5 @@ export interface Log {
   deviceId: string;
   type: string;
   message: string;
-  time: Date;
+  createdAt: string;
 }

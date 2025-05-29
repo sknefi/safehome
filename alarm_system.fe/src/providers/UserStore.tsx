@@ -1,20 +1,54 @@
-import { create } from "zustand";
+import { useEffect, useState } from "react";
 import { User } from "../components/assets";
 
-interface UserStore {
-  userData: User | null;
-  accessToken: string | null;
-  refreshToken: string | null;
-  updateUserData: (newUserData: User | null) => void;
-  updateAccessToken: (newToken: string | null) => void;
-  updateRefreshToken: (newToken: string | null) => void;
-}
+const LOCAL_USER_KEY = "userData";
+const LOCAL_ACCESS_TOKEN_KEY = "accessToken";
+const LOCAL_REFRESH_TOKEN_KEY = "refreshToken";
 
-export const useUserStore = create<UserStore>((set) => ({
-  userData: null,
-  accessToken: null,
-  refreshToken: null,
-  updateUserData: (newUserData) => set({ userData: newUserData }),
-  updateAccessToken: (newToken) => set({ accessToken: newToken }),
-  updateRefreshToken: (newToken) => set({ refreshToken: newToken }),
-}));
+export function useUser() {
+  const [userData, setUserData] = useState<User | null>(() => {
+    const stored = localStorage.getItem(LOCAL_USER_KEY);
+    return stored ? JSON.parse(stored) : null;
+  });
+
+  const [accessToken, setAccessToken] = useState<string | null>(() => {
+    return localStorage.getItem(LOCAL_ACCESS_TOKEN_KEY);
+  });
+
+  const [refreshToken, setRefreshToken] = useState<string | null>(() => {
+    return localStorage.getItem(LOCAL_REFRESH_TOKEN_KEY);
+  });
+
+  useEffect(() => {
+    if (userData) {
+      localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(userData));
+    } else {
+      localStorage.removeItem(LOCAL_USER_KEY);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (accessToken) {
+      localStorage.setItem(LOCAL_ACCESS_TOKEN_KEY, accessToken);
+    } else {
+      localStorage.removeItem(LOCAL_ACCESS_TOKEN_KEY);
+    }
+  }, [accessToken]);
+
+  useEffect(() => {
+    if (refreshToken) {
+      localStorage.setItem(LOCAL_REFRESH_TOKEN_KEY, refreshToken);
+    } else {
+      localStorage.removeItem(LOCAL_REFRESH_TOKEN_KEY);
+    }
+  }, [refreshToken]);
+
+  return {
+    userData,
+    accessToken,
+    refreshToken,
+    updateUserData: setUserData,
+    updateAccessToken: setAccessToken,
+    updateRefreshToken: setRefreshToken,
+  };
+}

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Household = require("../models/HouseHold");
+const Device = require("../models/Device");
 
 exports.createHousehold = async (householdData) => {
   try {
@@ -214,6 +215,38 @@ exports.updateHouseholdNameAdmin = async (householdId, newName) => {
     await household.save();
 
     return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// each HW is only assigned to one household
+exports.getHouseholdStateBasedOnHwId = async (hwId) => {
+  try {
+    const device = await Device.findOne({ hw_id: hwId });
+	if (!device) {
+		throw new Error("Device not found.");
+	}
+	const household = await Household.findOne({ _id: device.householdId });
+
+    if (!household) {
+      throw new Error("Household not found.");
+    }
+
+    const devices = await Device.find({ householdId: household._id });
+
+	if (devices.length === 0) {
+		return false; // no devices => household is not active
+	}
+
+	let isHouseholdActive = false;
+    devices.forEach((device) => {
+      if (device.active) {
+        isHouseholdActive = true;
+      }
+    });
+
+    return isHouseholdActive; // one device is active => every device has to be active => household is active
   } catch (error) {
     throw error;
   }

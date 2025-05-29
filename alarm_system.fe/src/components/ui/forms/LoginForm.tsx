@@ -21,7 +21,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { useUserStore } from "../../../providers";
+import { useUser } from "../../../providers";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -34,8 +34,8 @@ const FormSchema = z.object({
 
 export const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = React.useState(false);
-  const { updateUserData, updateAccessToken, updateRefreshToken } =
-    useUserStore();
+
+  const { updateAccessToken, updateRefreshToken, updateUserData } = useUser();
   const navigate = useNavigate();
 
   type FormFields = z.infer<typeof FormSchema>;

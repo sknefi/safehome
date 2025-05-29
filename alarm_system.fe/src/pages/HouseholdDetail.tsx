@@ -19,7 +19,7 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import axios from "axios";
-import { useUserStore } from "../providers";
+import { useUser } from "../providers";
 import { toast } from "sonner";
 
 import {
@@ -31,8 +31,14 @@ import {
   DialogTitle,
 } from "../components/ui/dialog";
 // Create a simple Skeleton component inline
-const Skeleton = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={`animate-pulse rounded-md bg-gray-200 ${className}`} {...props} />
+const Skeleton = ({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => (
+  <div
+    className={`animate-pulse rounded-md bg-gray-200 ${className}`}
+    {...props}
+  />
 );
 import { SettingsTab } from "../components/ui/tabs/SettingsTab";
 import { DevicesTab } from "../components/ui/tabs/DevicesTab";
@@ -53,7 +59,9 @@ export const HouseholdDetail: React.FC = () => {
   }
 
   const GATEWAY = import.meta.env.VITE_GATEWAY;
-  const BEARER_TOKEN = useUserStore((state) => state.accessToken);
+  const { accessToken: BEARER_TOKEN } = useUser();
+  const { userData } = useUser();
+  const role = userData?.role;
 
   /* fetch household data by id */
   const {
@@ -64,8 +72,9 @@ export const HouseholdDetail: React.FC = () => {
   } = useQuery({
     queryKey: ["household", householdId],
     queryFn: async () => {
+      const roleGet = role === "admin" ? "admin/wholeAdmin" : "user/whole";
       const { data } = await axios.get<DtoOutGetHousehold>(
-        `${GATEWAY}/user/whole/${householdId}`,
+        `${GATEWAY}/${roleGet}/${householdId}`,
         {
           headers: {
             Authorization: `Bearer ${BEARER_TOKEN}`,
@@ -150,10 +159,11 @@ export const HouseholdDetail: React.FC = () => {
     },
   });
 
-  const isActive: boolean = React.useMemo(
-    () => household?.devices.every((device) => device.active === true) ?? false,
-    [household?.devices]
-  );
+  const isActive: boolean = React.useMemo(() => {
+    return Array.isArray(household?.devices)
+      ? household.devices.every((device) => device.active === true)
+      : false;
+  }, [household?.devices]);
 
   const triggeredDevices: Device[] = React.useMemo(
     () =>

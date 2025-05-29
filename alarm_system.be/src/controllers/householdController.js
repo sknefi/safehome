@@ -330,3 +330,28 @@ exports.updateHouseholdNameAdmin = async (req, res) => {
     });
   }
 };
+
+exports.getHouseholdStateBasedOnHwId = async (req, res) => {
+  try {
+    const hwId = req.params.hwId;
+    const householdState = await householdService.getHouseholdStateBasedOnHwId(hwId);
+    res.status(200).json({
+      success: true,
+      message: "Household state retrieved successfully",
+      data: householdState,
+    });
+  } catch (error) {
+    if (error.message.includes("not found")) {
+      res.status(404).json({
+        success: false,
+        message: error.message,
+      });
+    } else {
+      console.error("Error getting household state:", error);
+      res.status(500).json({
+        success: false,
+      message: error.message,
+    });
+    }
+  }
+};

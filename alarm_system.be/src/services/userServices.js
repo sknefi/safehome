@@ -100,6 +100,45 @@ exports.getWholeHouseholdById = async (householdId, currentUserId) => {
   }
 };
 
+exports.getWholeHouseholdByIdAdmin = async (householdId) => {
+  if (!householdId) {
+    throw new Error("Household ID is required");
+  }
+
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+    })
+      .populate({
+        path: "devices",
+        model: Device,
+        select: "name type active alarm_triggered createdAt",
+      })
+      .populate({
+        path: "members",
+        model: User,
+        select: "firstName lastName email role",
+      })
+      .populate({
+        path: "ownerId",
+        model: User,
+        select: "_id firstName lastName email",
+      })
+      .lean();
+
+    if (!household) {
+      throw new Error("Household not found or access denied");
+    }
+
+    return {
+      household,
+    };
+  } catch (error) {
+    console.error("Error in getWholeHouseholdById service:", error);
+    throw error;
+  }
+};
+
 exports.getAllUsers = async () => {
   try {
     const users = await User.find().select("-password -refreshToken");

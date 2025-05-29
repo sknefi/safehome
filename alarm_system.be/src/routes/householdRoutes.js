@@ -42,4 +42,10 @@ router.put(
   householdController.updateHouseholdName
 );
 
+router.put(
+  "/update-name-admin/:id",
+  adminMiddleware,
+  householdController.updateHouseholdNameAdmin
+);
+
 module.exports = router;

@@ -232,7 +232,7 @@ exports.removeUserFromHouseholdAdmin = async (req, res) => {
 
 exports.updateHouseholdName = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const ownerId = req.user.id;
     const householdId = req.params.id;
     const newName = req.body.name;
 
@@ -245,7 +245,45 @@ exports.updateHouseholdName = async (req, res) => {
 
     const updatedHousehold = await householdService.updateHouseholdName(
       householdId,
-      userId,
+      ownerId,
+      newName
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Household name updated successfully",
+      data: updatedHousehold,
+    });
+  } catch (error) {
+    console.error("Error updating household name:", error);
+
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("rights")
+      ? 403
+      : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.updateHouseholdNameAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const newName = req.body.name;
+
+    if (!newName || typeof newName !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Valid household name is required",
+      });
+    }
+
+    const updatedHousehold = await householdService.updateHouseholdNameAdmin(
+      householdId,
       newName
     );
 

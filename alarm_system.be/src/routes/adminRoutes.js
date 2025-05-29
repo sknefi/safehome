@@ -15,7 +15,7 @@ router.post("/login", login);
 router.post("/refresh-token", refreshToken);
 router.post("/logout", logout);
 router.get(
-  "/wholeAdmin/:id",
+  "/whole-admin/:id",
   adminAuthMiddleware,
   householdController.getWholeHouseholdByIdAdmin
 );

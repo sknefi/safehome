@@ -83,6 +83,29 @@ exports.deleteHousehold = async (req, res) => {
   }
 };
 
+exports.deleteHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+
+    const deleteHousehold = await householdService.deleteHouseholdAdmin(
+      householdId
+    );
+    res.status(200).json({
+      success: true,
+      message: "Household was deleted successfully",
+      data: deleteHousehold,
+    });
+  } catch (error) {
+    console.log("Error deleting household.", error);
+
+    const statusCode = error.message.includes("not found") ? 404 : 500;
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.addUserToHousehold = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -99,6 +122,37 @@ exports.addUserToHousehold = async (req, res) => {
     const addUser = await householdService.addUserToHousehold(
       householdId,
       userId,
+      newUserId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "User was added to the household successfully",
+      data: addUser,
+    });
+  } catch (error) {
+    console.log("Error adding user to household.", error);
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.addUserToHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const newUserId = req.body.newUserId;
+
+    if (!newUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "New user ID is required",
+      });
+    }
+
+    const addUser = await householdService.addUserToHouseholdAdmin(
+      householdId,
       newUserId
     );
 
@@ -158,9 +212,50 @@ exports.removeUserFromHousehold = async (req, res) => {
   }
 };
 
+exports.removeUserFromHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const deleteUserId = req.body.deleteUserId;
+
+    if (!deleteUserId || !mongoose.Types.ObjectId.isValid(deleteUserId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid delete user ID is required",
+      });
+    }
+
+    const updatedHousehold =
+      await householdService.removeUserFromHouseholdAdmin(
+        householdId,
+        deleteUserId
+      );
+
+    res.status(200).json({
+      success: true,
+      message: "User was removed from the household successfully",
+      data: updatedHousehold,
+    });
+  } catch (error) {
+    console.error("Error removing user from household:", error);
+
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("rights")
+      ? 403
+      : error.message.includes("member")
+      ? 400
+      : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.updateHouseholdName = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const ownerId = req.user.id;
     const householdId = req.params.id;
     const newName = req.body.name;
 
@@ -173,7 +268,45 @@ exports.updateHouseholdName = async (req, res) => {
 
     const updatedHousehold = await householdService.updateHouseholdName(
       householdId,
-      userId,
+      ownerId,
+      newName
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Household name updated successfully",
+      data: updatedHousehold,
+    });
+  } catch (error) {
+    console.error("Error updating household name:", error);
+
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("rights")
+      ? 403
+      : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.updateHouseholdNameAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const newName = req.body.name;
+
+    if (!newName || typeof newName !== "string") {
+      return res.status(400).json({
+        success: false,
+        message: "Valid household name is required",
+      });
+    }
+
+    const updatedHousehold = await householdService.updateHouseholdNameAdmin(
+      householdId,
       newName
     );
 

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const householdController = require("../controllers/householdController");
 const authMiddleware = require("../middlewares/auth");
+const adminMiddleware = require("../middlewares/admin");
 
 router.post("/create", authMiddleware, householdController.createHousehold);
 
@@ -18,9 +19,21 @@ router.put(
 );
 
 router.put(
+  "/add-user-admin/:id",
+  adminMiddleware,
+  householdController.addUserToHouseholdAdmin
+);
+
+router.put(
   "/remove-user/:id",
   authMiddleware,
   householdController.removeUserFromHousehold
+);
+
+router.put(
+  "/remove-user-admin/:id",
+  adminMiddleware,
+  householdController.removeUserFromHouseholdAdmin
 );
 
 router.put(

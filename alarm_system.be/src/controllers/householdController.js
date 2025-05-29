@@ -116,6 +116,37 @@ exports.addUserToHousehold = async (req, res) => {
   }
 };
 
+exports.addUserToHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const newUserId = req.body.newUserId;
+
+    if (!newUserId) {
+      return res.status(400).json({
+        success: false,
+        message: "New user ID is required",
+      });
+    }
+
+    const addUser = await householdService.addUserToHouseholdAdmin(
+      householdId,
+      newUserId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "User was added to the household successfully",
+      data: addUser,
+    });
+  } catch (error) {
+    console.log("Error adding user to household.", error);
+    res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 exports.removeUserFromHousehold = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -134,6 +165,47 @@ exports.removeUserFromHousehold = async (req, res) => {
       userId,
       deleteUserId
     );
+
+    res.status(200).json({
+      success: true,
+      message: "User was removed from the household successfully",
+      data: updatedHousehold,
+    });
+  } catch (error) {
+    console.error("Error removing user from household:", error);
+
+    const statusCode = error.message.includes("not found")
+      ? 404
+      : error.message.includes("rights")
+      ? 403
+      : error.message.includes("member")
+      ? 400
+      : 500;
+
+    res.status(statusCode).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+exports.removeUserFromHouseholdAdmin = async (req, res) => {
+  try {
+    const householdId = req.params.id;
+    const deleteUserId = req.body.deleteUserId;
+
+    if (!deleteUserId || !mongoose.Types.ObjectId.isValid(deleteUserId)) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid delete user ID is required",
+      });
+    }
+
+    const updatedHousehold =
+      await householdService.removeUserFromHouseholdAdmin(
+        householdId,
+        deleteUserId
+      );
 
     res.status(200).json({
       success: true,

@@ -68,6 +68,31 @@ exports.addUserToHousehold = async (householdId, userId, newUserId) => {
   }
 };
 
+exports.addUserToHouseholdAdmin = async (householdId, newUserId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
+    });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    if (household.members.includes(newUserId)) {
+      throw new Error("User already exists in the household.");
+    }
+
+    household.members.push(newUserId);
+    await household.save();
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
 exports.removeUserFromHousehold = async (
   householdId,
   ownerId,
@@ -77,6 +102,35 @@ exports.removeUserFromHousehold = async (
     const household = await Household.findOne({
       _id: householdId,
       ownerId: ownerId,
+    });
+
+    if (!household) {
+      throw new Error(
+        "Household not found or you don't have rights for this action."
+      );
+    }
+
+    const userIndex = household.members.findIndex(
+      (memberId) => memberId.toString() === deleteUserId
+    );
+
+    if (userIndex === -1) {
+      throw new Error("User is not a member of this household.");
+    }
+
+    household.members.splice(userIndex, 1);
+    await household.save();
+
+    return household;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.removeUserFromHouseholdAdmin = async (householdId, deleteUserId) => {
+  try {
+    const household = await Household.findOne({
+      _id: householdId,
     });
 
     if (!household) {

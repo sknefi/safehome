@@ -130,9 +130,7 @@ exports.getWholeHouseholdByIdAdmin = async (householdId) => {
       throw new Error("Household not found or access denied");
     }
 
-    return {
-      household,
-    };
+    return household;
   } catch (error) {
     console.error("Error in getWholeHouseholdById service:", error);
     throw error;

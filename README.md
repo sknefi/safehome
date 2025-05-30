@@ -35,6 +35,7 @@ Complete business and application documentation can be found in the `/documentat
 - `alarm_system.fe/` - Frontend React application built with Vite
 - `alarm_system.be/` - Backend Express server
 - `documentation/` - Complete business and technical documentation
+- `node-red/` - Node-RED flows for IoT device integration
 
 ## Node-RED Flow
 
